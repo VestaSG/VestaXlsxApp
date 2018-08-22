@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import codecs
 import sys
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
