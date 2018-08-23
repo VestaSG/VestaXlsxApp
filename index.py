@@ -192,5 +192,5 @@ class VestaXlsxApp:
 # print(r.request.headers)
 
 core_obj = VestaXlsxApp("testbase.xlsx")
-# core_obj.load()
+core_obj.load()
 print("Ok")
