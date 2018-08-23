@@ -14,18 +14,18 @@ import json
 import copy
 
 class HFAPI:
-	def __init__(self):
-		self.load_conf()
+	def __init__(self, token):
+		self.set_token(token)
 		self.host = 'https://api.huntflow.ru/'
 		self.heads = {'Authorization': 'Bearer ' + self.token, 'User-Agent': 'Python3. VestaXlsxApp (test@huntflow.ru)'}
 		self.tosave = dict()
 		self.key_field = "id" # имя id в ответе API
 
-def load_conf(self):
-	f = open('conf.json')
-	j = json.loads(f.read())
-	self.token = j["token"]
-	self.uid = j["uid"]
+	def set_token(self, token):
+		self.token = token
+
+	def set_uid(self, uid):
+		self.uid = uid
 
 	def load(self, id = 0):
 		return len(self.j)
@@ -161,15 +161,19 @@ class XLSLoader:
 
 class VestaXlsxApp:
 	def __init__(self, file):
+		self.load_conf()
 		self.xl = XLSLoader(file)
-		self.step = Step()
-		self.vac = Vacancy()
+		self.step = Step(self.token)
+		self.step.set_uid(self.uid)
+		self.vac = Vacancy(self.token)
+		self.vac.set_uid(self.uid)
 
 	def load(self):
 		self.step.load()
 		self.vac.load()
 		for i in range(2, 2+self.xl.row_count()): # range(2, row_count + 1)
-			c_obj = Candidat()
+			c_obj = Candidat(self.token)
+			c_obj.set_uid(self.uid)
 			c_obj.set_name(self.xl.out_fio(i))
 			c_obj.set_money(self.xl.out_zp(i))
 			c_obj.set_comment(self.xl.out_comment(i))
@@ -177,6 +181,13 @@ class VestaXlsxApp:
 			c_obj.set_vac(self.vac.id_by_name(self.xl.out_vac(i)))
 			c_obj.add_entity()
 			del c_obj
+
+	def load_conf(self):
+		f = open('conf.json')
+		j = json.loads(f.read())
+		self.token = j["token"]
+		self.uid = j["uid"]
+
 
 # print(r.request.headers)
 
