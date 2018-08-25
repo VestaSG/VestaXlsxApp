@@ -74,11 +74,22 @@ class Candidat(HFAPI):
 	def set_money(self, v):
 		self.tosave["money"] = str(v)
 
+	def set_fid(self, v):
+		if v:
+			self.tosave["files"] = []
+			f = dict()
+			f["id"] = v
+			self.tosave["files"].append(f)
+
 	def upd_vac_step_comment(self, id):
 		mini = dict()
 		mini["comment"] = self.tosave["comment"]
 		mini["status"] = self.tosave["status"]
 		mini["vacancy"] = self.tosave["vacancy"]
+		try:
+			mini["files"] = self.tosave["files"]
+		except:
+			pass
 		r = requests.post(self.host + 'account/' + str(self.uid) + "/applicants/" + str(id) + "/vacancy", headers=self.heads, json=mini)
 
 	def add_entity(self):
@@ -87,6 +98,10 @@ class Candidat(HFAPI):
 		del mini["comment"]
 		del mini["status"]
 		del mini["vacancy"]
+		try:
+			del mini["files"]
+		except:
+			pass
 		r = requests.post(self.host + 'account/' + str(self.uid) + '/applicants', headers=self.heads, json=mini)
 		j = json.loads(r.text)
 		id = j[self.key_field]
@@ -117,8 +132,38 @@ class Vacancy(HFAPI):
 		return self.id_by_field(name, "position")
 
 class File(HFAPI):
-	def id_by_name(self, name):
-		return name
+	def set_vac_name(self, name):
+		self.vac_nm = name
+
+	def set_cand_name(self, name):
+		self.cand_nm = name
+
+	def new_file(self, cand_nm, vac_nm):
+		# TODO: пути должны быть абсолютные
+		self.set_cand_name(cand_nm)
+		self.set_vac_name(vac_nm)
+		name = "Тестовое задание/" + self.vac_nm + "/"+ self.cand_nm
+		ext = ".doc"
+		mim = "application/msword"
+		i = 0
+		while i < 2:
+			if self.open_file(name + ext):
+				fcontent = self.f.read()
+				post = {'file': ('f' + ext, fcontent, mim)}
+				r = requests.post(self.host + 'account/' + str(self.uid) + '/upload', headers=self.heads, files=post)
+				j = json.loads(r.text)
+				return j['id']
+			ext = ".pdf"
+			mim = "application/pdf"
+			i += 1
+		return False
+
+	def open_file(self, name):
+		try:
+			self.f = open(name.encode('utf-8'), 'rb')
+		except IOError:
+			return False
+		return True
 
 
 from openpyxl import load_workbook # https://pypi.org/project/openpyxl/
@@ -172,8 +217,14 @@ class VestaXlsxApp:
 		self.step.load()
 		self.vac.load()
 		for i in range(2, 2+self.xl.row_count()): # range(2, row_count + 1)
+			f_obj = File(self.token)
+			f_obj.set_uid(self.uid)
+			fid = f_obj.new_file(self.xl.out_fio(i), self.xl.out_vac(i))
+
 			c_obj = Candidat(self.token)
 			c_obj.set_uid(self.uid)
+
+			c_obj.set_fid(fid)
 			c_obj.set_name(self.xl.out_fio(i))
 			c_obj.set_money(self.xl.out_zp(i))
 			c_obj.set_comment(self.xl.out_comment(i))

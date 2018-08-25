@@ -14,8 +14,6 @@ fls = os.listdir('./')
 # fname = fls[7]
 fname = "t.pdf"
 fname = "Тестовое задание/Frontend-разработчик/Танский Михаил.pdf".encode('utf-8')
-print()
-print("<br />")
 f = open('conf.json')
 j = json.loads(f.read())
 token = j["token"]
@@ -29,14 +27,15 @@ print("<br />")
 
 # post = {"file": f1} #
 # TODO: брать расширение из имени файла
-post = {'file': ('rt.pdf', fcontent)}
-# r = requests.post('/python/testhf/test_post.php', headers=heads, files=post) # https://api.huntflow.ru/account/4756/upload
+post = {'file': ('rt.pdf', fcontent, 'application/pdf')} # "application/msword"
+# r = requests.post('http://79.120.12.81/python/testhf/test_post.php', headers=heads, files=post) # https://api.huntflow.ru/account/4756/upload
 r = requests.post('https://api.huntflow.ru/account/' + str(uid) + '/upload', headers=heads, files=post) # https://api.huntflow.ru/account/4756/upload
-print(r.text + "<br />") # {"errors": [{"type": "upload", "value": "unable_to_upload"}]}
-# print(json.loads(r.text))
+# print(r.text + "<br />") # {"errors": [{"type": "upload", "value": "unable_to_upload"}]}
+j = json.loads(r.text)
+print(str(j["id"]))
 # print(r.request.headers)
 print("<br />")
 
 print(sys.getfilesystemencoding())
 
-# Вопрос 1: что не так к моменту выполнения строки 34 или в ней самой? Почему ответ {"errors": [{"type": "upload", "value": "unable_to_upload"}]} ?
+# Вопросов нет
