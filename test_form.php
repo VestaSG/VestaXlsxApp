@@ -12,4 +12,6 @@ header('Content-Type: text/html; charset=utf-8');
 	<input type="submit" class="bigbutton" value="ֺКу" />
 	<br clear="all" />
 
+	<!-- test comment в master -->
+
 </form>
