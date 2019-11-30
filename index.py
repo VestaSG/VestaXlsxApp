@@ -6,8 +6,8 @@ sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
 
 print("Content-type: text/html; charset=utf-8\n")
 
-# https://github.com/huntflow/api/blob/master/ru/user.md
-# /me не возвращает id пользователя
+	# https://github.com/huntflow/api/blob/master/ru/user.md
+	# /me не возвращает id пользователя
 
 import requests
 import json
@@ -243,5 +243,5 @@ class VestaXlsxApp:
 # print(r.request.headers)
 
 core_obj = VestaXlsxApp("testbase.xlsx")
-core_obj.load()
+# core_obj.load()
 print("Ok")
