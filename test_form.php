@@ -12,7 +12,7 @@ header('Content-Type: text/html; charset=utf-8');
 	<input type="submit" class="bigbutton" value="ֺКу" />
 	<br clear="all" />
 
-	<!-- test comment в test_fork -->
+	<!-- test comment в test_fork 1 str -->
 
 </form>
 
